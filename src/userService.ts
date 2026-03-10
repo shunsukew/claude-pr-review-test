@@ -11,7 +11,7 @@ interface ApiResponse {
   error: string | null;
 }
 
-console.log("hello");
+console.log("hello world");
 
 const API_BASE_URL = "https://api.example.com";
 
