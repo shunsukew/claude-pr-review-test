@@ -21,5 +21,6 @@ jobs:
       - name: Run Claude PR Review
         uses: ./.github/actions/claude-pr-review
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_model: claude-opus-4-5-20251101
