@@ -38,27 +38,19 @@ runs:
       with:
         claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
         anthropic_api_key: ${{ inputs.anthropic_api_key }}
-        track_progress: true
-        plugin_marketplaces: |
-          https://github.com/anthropics/claude-code.git
-        plugins: |
-          pr-review-toolkit@claude-code-plugins
         prompt: |
           REPO: ${{ github.repository }}
           PR NUMBER: ${{ github.event.pull_request.number }}
 
-          Please review this PR comprehensively.
-          Use the pr-review-toolkit agents to check:
-          - Code quality and style (code-reviewer)
-          - Test coverage (pr-test-analyzer)
-          - Error handling (silent-failure-hunter)
-          - Type design (type-design-analyzer)
-          - Comment accuracy (comment-analyzer)
-          - Possible Code Simplifications (code-simplifier)
+          Please review this PR comprehensively. Check for:
+          - Code quality and style issues
+          - Error handling problems (silent failures, swallowed errors)
+          - Redundant or duplicate code
+          - Type safety issues
+          - Potential bugs or logic errors
 
           ${{ inputs.custom_prompt }}
 
-          Post review results as a PR comment using `gh pr comment`.
-          Use `gh pr review` for inline comments on specific code lines.
-        claude_args: |
-          --allowedTools "${{ inputs.allowed_tools }}"
+          Use `gh pr diff ${{ github.event.pull_request.number }}` to see the changes.
+          Post your review as a PR comment using `gh pr comment ${{ github.event.pull_request.number }} --body "your review"`.
+        claude_args: --allowedTools "${{ inputs.allowed_tools }}"
