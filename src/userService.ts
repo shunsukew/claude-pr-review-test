@@ -11,6 +11,8 @@ interface ApiResponse {
   error: string | null;
 }
 
+console.log("hello");
+
 const API_BASE_URL = "https://api.example.com";
 
 export async function fetchUser(userId: number): Promise<User | null> {
