@@ -30,10 +30,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v6
-      with:
-        fetch-depth: 1
-
     - name: Run Claude PR Review
       if: ${{ inputs.claude_code_oauth_token != '' || inputs.anthropic_api_key != '' }}
       uses: anthropics/claude-code-action@v1

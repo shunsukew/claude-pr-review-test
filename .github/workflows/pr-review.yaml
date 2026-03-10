@@ -14,6 +14,10 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
       - name: Run Claude PR Review
         uses: ./.github/actions/claude-pr-review
         with:
