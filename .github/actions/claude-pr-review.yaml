@@ -1,0 +1,68 @@
+name: 'Claude PR Review'
+description: 'PR review with Claude pr-review-toolkit'
+
+inputs:
+  claude_code_oauth_token:
+    description: 'Claude Code OAuth token (either this or anthropic_api_key is required)'
+    required: false
+    default: ''
+
+  anthropic_api_key:
+    description: 'Anthropic API key (either this or claude_code_oauth_token is required)'
+    required: false
+    default: ''
+
+  anthropic_model:
+    description: 'Claude model to use (e.g., claude-opus-4-5-20251101, claude-sonnet-4-5-20250514)'
+    required: false
+    default: 'claude-opus-4-5-20251101'
+
+  custom_prompt:
+    description: 'Additional custom instructions for the review'
+    required: false
+    default: ''
+
+  allowed_tools:
+    description: 'Tools allowed for Claude to use'
+    required: false
+    default: 'Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 1
+
+    - name: Run Claude PR Review
+      if: ${{ inputs.claude_code_oauth_token != '' || inputs.anthropic_api_key != '' }}
+      uses: anthropics/claude-code-action@v1
+      env:
+        ANTHROPIC_MODEL: ${{ inputs.anthropic_model }}
+      with:
+        claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
+        anthropic_api_key: ${{ inputs.anthropic_api_key }}
+        track_progress: true
+        plugin_marketplaces: |
+          https://github.com/anthropics/claude-code.git
+        plugins: |
+          pr-review-toolkit@claude-code-plugins
+        prompt: |
+          REPO: ${{ github.repository }}
+          PR NUMBER: ${{ github.event.pull_request.number }}
+
+          Please review this PR comprehensively.
+          Use the pr-review-toolkit agents to check:
+          - Code quality and style (code-reviewer)
+          - Test coverage (pr-test-analyzer)
+          - Error handling (silent-failure-hunter)
+          - Type design (type-design-analyzer)
+          - Comment accuracy (comment-analyzer)
+          - Possible Code Simplifications (code-simplifier)
+
+          ${{ inputs.custom_prompt }}
+
+          Post review results as a PR comment using `gh pr comment`.
+          Use `gh pr review` for inline comments on specific code lines.
+        claude_args: |
+          --allowedTools "${{ inputs.allowed_tools }}"
