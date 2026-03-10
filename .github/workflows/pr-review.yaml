@@ -14,7 +14,8 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/claude-pr-review
+      - name: Run Claude PR Review
+        uses: ./.github/actions/claude-pr-review.yaml
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           anthropic_model: claude-opus-4-6
